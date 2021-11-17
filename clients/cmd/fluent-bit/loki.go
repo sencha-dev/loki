@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -50,6 +51,12 @@ func newPlugin(cfg *config, logger log.Logger) (*loki, error) {
 // sendRecord send fluentbit records to loki as an entry.
 func (l *loki) sendRecord(r map[interface{}]interface{}, ts time.Time) error {
 	records := toStringMap(r)
+	if len(l.cfg.parseJsonKeys) > 0 {
+		err := parseJsonKeys(records, l.cfg.parseJsonKeys)
+		if err != nil {
+			return fmt.Errorf("error parsing json keys: %v", err)
+		}
+	}
 	level.Debug(l.logger).Log("msg", "processing records", "records", fmt.Sprintf("%+v", records))
 	lbs := model.LabelSet{}
 	if l.cfg.autoKubernetesLabels {
@@ -218,6 +225,23 @@ func removeKeys(records map[string]interface{}, keys []string) {
 	for _, k := range keys {
 		delete(records, k)
 	}
+}
+
+func parseJsonKeys(records map[string]interface{}, keys []string) error {
+	for _, key := range keys {
+		if value, ok := records[key]; ok {
+			switch typedVal := value.(type) {
+			case string:
+				parsed := map[string]interface{}{}
+				err := json.Unmarshal([]byte(typedVal), &parsed)
+				if err != nil {
+					return err
+				}
+				records[key] = parsed
+			}
+		}
+	}
+	return nil
 }
 
 func createLine(records map[string]interface{}, f format) (string, error) {

@@ -186,6 +186,36 @@ func Test_removeKeys(t *testing.T) {
 	}
 }
 
+func Test_parseJsonKeys(t *testing.T) {
+	tests := []struct {
+		name     string
+		records  map[string]interface{}
+		expected map[string]interface{}
+		keys     []string
+		wantErr  bool
+	}{
+		{"parse single key", map[string]interface{}{"foo": `{"bar": "bazz", "buzz": {"foo": ["a", "b", "c"]}}`}, map[string]interface{}{"foo": map[string]interface{}{"bar": "bazz", "buzz": map[string]interface{}{"foo": []interface{}{"a", "b", "c"}}}}, []string{"foo"}, false},
+		{"parse multiple keys", map[string]interface{}{"foo": `{"bar": "bazz"}`, "foofoo": `{"barbar": ["bazz", "bazz"]}`}, map[string]interface{}{"foo": map[string]interface{}{"bar": "bazz"}, "foofoo": map[string]interface{}{"barbar": []interface{}{"bazz", "bazz"}}}, []string{"foo", "foofoo"}, false},
+		{"parse bad json", map[string]interface{}{"foo": `{a: b}`}, map[string]interface{}{}, []string{"foo"}, true},
+		{"parse not existing", map[string]interface{}{"foo": "bar"}, map[string]interface{}{"foo": "bar"}, []string{"bazz"}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := parseJsonKeys(tt.records, tt.keys)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("parseJsonKeys() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err != nil {
+				return
+			}
+			if !reflect.DeepEqual(tt.expected, tt.records) {
+				t.Errorf("parseJsonKeys() = %v, want %v", tt.records, tt.expected)
+			}
+		})
+	}
+}
+
 func Test_extractLabels(t *testing.T) {
 	tests := []struct {
 		name    string

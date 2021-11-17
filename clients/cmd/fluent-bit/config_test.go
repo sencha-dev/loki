@@ -62,6 +62,7 @@ func Test_parseConfig(t *testing.T) {
 				"Timeout":       "1s",
 				"RemoveKeys":    "buzz,fuzz",
 				"LabelKeys":     "foo,bar",
+				"ParseJsonKeys": "biz,bazz",
 				"DropSingleKey": "false",
 				"MinBackoff":    "1ms",
 				"MaxBackoff":    "5m",
@@ -81,6 +82,7 @@ func Test_parseConfig(t *testing.T) {
 				logLevel:      mustParseLogLevel("warn"),
 				labelKeys:     []string{"foo", "bar"},
 				removeKeys:    []string{"buzz", "fuzz"},
+				parseJsonKeys: []string{"biz", "baz"},
 				dropSingleKey: false,
 			},
 			false},
@@ -95,6 +97,7 @@ func Test_parseConfig(t *testing.T) {
 				"Timeout":       "1s",
 				"RemoveKeys":    "buzz,fuzz",
 				"LabelKeys":     "foo,bar",
+				"ParseJsonKeys": "biz,bazz",
 				"DropSingleKey": "false",
 				"MinBackoff":    "1ms",
 				"MaxBackoff":    "5m",
@@ -115,6 +118,7 @@ func Test_parseConfig(t *testing.T) {
 				logLevel:      mustParseLogLevel("warn"),
 				labelKeys:     nil,
 				removeKeys:    []string{"buzz", "fuzz"},
+				parseJsonKeys: []string{"biz", "baz"},
 				dropSingleKey: false,
 				labelMap: map[string]interface{}{
 					"kubernetes": map[string]interface{}{

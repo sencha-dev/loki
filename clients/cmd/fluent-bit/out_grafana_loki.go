@@ -70,6 +70,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	level.Info(paramLogger).Log("AutoKubernetesLabels", conf.autoKubernetesLabels)
 	level.Info(paramLogger).Log("RemoveKeys", fmt.Sprintf("%+v", conf.removeKeys))
 	level.Info(paramLogger).Log("LabelKeys", fmt.Sprintf("%+v", conf.labelKeys))
+	level.Info(paramLogger).Log("ParseJsonKeys", fmt.Sprintf("%+v", conf.parseJsonKeys))
 	level.Info(paramLogger).Log("LineFormat", conf.lineFormat)
 	level.Info(paramLogger).Log("DropSingleKey", conf.dropSingleKey)
 	level.Info(paramLogger).Log("LabelMapPath", fmt.Sprintf("%+v", conf.labelMap))

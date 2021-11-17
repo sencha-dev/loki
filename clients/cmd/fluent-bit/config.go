@@ -49,6 +49,7 @@ type config struct {
 	autoKubernetesLabels bool
 	removeKeys           []string
 	labelKeys            []string
+	parseJsonKeys        []string
 	lineFormat           format
 	dropSingleKey        bool
 	labelMap             map[string]interface{}
@@ -176,6 +177,11 @@ func parseConfig(cfg ConfigGetter) (*config, error) {
 	labelKeys := cfg.Get("LabelKeys")
 	if labelKeys != "" {
 		res.labelKeys = strings.Split(labelKeys, ",")
+	}
+
+	parseJsonKeys := cfg.Get("ParseJsonKeys")
+	if parseJsonKeys != "" {
+		res.parseJsonKeys = strings.Split(parseJsonKeys, ",")
 	}
 
 	dropSingleKey := cfg.Get("DropSingleKey")
